@@ -38,8 +38,7 @@ class DBHandler {
 
   Future<List<Model>> getDataList(String table) async {
     await db;
-    final List<Map<String, Object?>> queryResult =
-        await _db!.rawQuery("SELECT * FROM ?", [table]);
+    final List<Map<String, Object?>> queryResult = await _db!.query(table);
     return queryResult.map((e) => Model.fromMap(e)).toList();
   }
 
