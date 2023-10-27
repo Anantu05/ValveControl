@@ -6,7 +6,7 @@ import 'dart:io' as io;
 import 'package:path/path.dart';
 import 'package:valve_control/models/model.dart';
 
-class ValvesDBHandler {
+class DBHandler {
   static Database? _db;
 
   Future<Database?> get db async {
@@ -38,8 +38,7 @@ class ValvesDBHandler {
 
   Future<List<Model>> getDataList(String table) async {
     await db;
-    final List<Map<String, Object?>> queryResult =
-        await _db!.rawQuery("SELECT * FROM ?", [table]);
+    final List<Map<String, Object?>> queryResult = await _db!.query(table);
     return queryResult.map((e) => Model.fromMap(e)).toList();
   }
 

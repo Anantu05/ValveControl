@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:valve_control/valves_screen.dart';
+import 'package:valve_control/screens/valves_screen.dart';
 
 void main() {
   runApp(const ValveControl());
