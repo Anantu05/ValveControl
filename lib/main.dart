@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:valve_control/valves_screen.dart';
 
 void main() {
-runApp(const ValveControl());
+  runApp(const ValveControl());
 }
 
 class ValveControl extends StatelessWidget {
-const ValveControl({Key? key}) : super(key: key);
+  const ValveControl({Key? key}) : super(key: key);
 
-@override
-Widget build(BuildContext context) {
-	return MaterialApp(
-		home: Scaffold(
-	appBar: AppBar(
-		title: const Text('Valve Control'),
-	),
-	body: const Center(child: Text('Valving my way through!')),
-	));
-}
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: ValvesScreen());
+  }
 }
