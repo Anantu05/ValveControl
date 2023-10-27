@@ -6,7 +6,7 @@ import 'dart:io' as io;
 import 'package:path/path.dart';
 import 'package:valve_control/models/model.dart';
 
-class ValvesDBHandler {
+class DBHandler {
   static Database? _db;
 
   Future<Database?> get db async {
