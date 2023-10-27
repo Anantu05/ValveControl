@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:valve_control/db/db_handler.dart';
-import 'package:valve_control/models/model.dart';
+import 'package:valve_control/models/valve/helper.dart';
+import 'package:valve_control/models/valve/model.dart';
 import 'package:valve_control/screens/add_valve_screen.dart';
 
 class ValvesScreen extends StatefulWidget {
@@ -11,17 +11,17 @@ class ValvesScreen extends StatefulWidget {
 }
 
 class _ValvesScreenState extends State<ValvesScreen> {
-  DBHandler? dbHandler;
-  late Future<List<Model>> valveDataList;
+  ValveDBHelper? dbHelper;
+  late Future<List<ValveModel>> valveDataList;
   @override
   void initState() {
     super.initState();
-    dbHandler = DBHandler();
+    dbHelper = ValveDBHelper();
     loadData();
   }
 
   loadData() async {
-    valveDataList = dbHandler!.getDataList('valves');
+    valveDataList = dbHelper!.getDataList();
   }
 
   @override
@@ -37,7 +37,7 @@ class _ValvesScreenState extends State<ValvesScreen> {
           Expanded(
               child: FutureBuilder(
             future: valveDataList,
-            builder: (context, AsyncSnapshot<List<Model>> snapshot) {
+            builder: (context, AsyncSnapshot<List<ValveModel>> snapshot) {
               if (!snapshot.hasData || snapshot.data == null) {
                 return Center(
                   child: CircularProgressIndicator(),

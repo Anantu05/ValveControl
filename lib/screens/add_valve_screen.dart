@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:valve_control/db/db_handler.dart';
-import 'package:valve_control/models/model.dart';
-import 'package:valve_control/models/valve_model.dart';
+import 'package:valve_control/models/valve/helper.dart';
+import 'package:valve_control/models/valve/model.dart';
 
 class AddValveScreen extends StatefulWidget {
   const AddValveScreen({super.key});
@@ -11,20 +10,20 @@ class AddValveScreen extends StatefulWidget {
 }
 
 class _AddValveScreenState extends State<AddValveScreen> {
-  DBHandler? dbHandler;
-  late Future<List<Model>> valveDataList;
+  ValveDBHelper? dbHandler;
+  late Future<List<ValveModel>> valveDataList;
 
   final _fromKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    dbHandler = DBHandler();
+    dbHandler = ValveDBHelper();
     loadData();
   }
 
   loadData() async {
-    valveDataList = dbHandler!.getDataList('valves');
+    valveDataList = dbHandler!.getDataList();
   }
 
   @override
@@ -82,7 +81,7 @@ class _AddValveScreenState extends State<AddValveScreen> {
             ),
           ),
           SizedBox(height: 40),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
