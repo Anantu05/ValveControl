@@ -49,4 +49,10 @@ class ValveDBHelper {
     return await dbClient!.update(ValveModel.table, model.toMap(),
         where: 'id = ?', whereArgs: [model.id]);
   }
+
+  Future<int> delete(int id) async {
+    var dbClient = await db;
+    return await dbClient!
+        .delete(ValveModel.table, where: 'id = ?', whereArgs: [id]);
+  }
 }
