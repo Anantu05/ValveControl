@@ -12,6 +12,8 @@ class AddValveScreen extends StatefulWidget {
 class _AddValveScreenState extends State<AddValveScreen> {
   ValveDBHelper? dbHandler;
   late Future<List<ValveModel>> valveDataList;
+  final nameController = TextEditingController();
+  final ipController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
 
@@ -28,8 +30,6 @@ class _AddValveScreenState extends State<AddValveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final ipController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Valve"),
@@ -122,10 +122,9 @@ class _AddValveScreenState extends State<AddValveScreen> {
                       if (_fromKey.currentState!.validate()) {
                         dbHandler!.insert(ValveModel(
                             name: nameController.text, ip: ipController.text));
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(true);
                         nameController.clear();
                         ipController.clear();
-                        print("Valve Added");
                       }
                     },
                     child: Container(
