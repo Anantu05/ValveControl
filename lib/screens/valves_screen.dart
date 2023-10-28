@@ -75,18 +75,14 @@ class _ValvesScreenState extends State<ValvesScreen> {
                     },
                     child: Container(
                       margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            )
-                          ]),
+                      decoration:
+                          BoxDecoration(color: Colors.white, boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        )
+                      ]),
                       child: Column(
                         children: [
                           ListTile(
