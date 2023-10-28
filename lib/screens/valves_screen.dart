@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:valve_control/components/toggle_switch.dart';
 import 'package:valve_control/models/valve/helper.dart';
 import 'package:valve_control/models/valve/model.dart';
 import 'package:valve_control/screens/add_valve_screen.dart';
@@ -71,34 +72,54 @@ class _ValvesScreenState extends State<ValvesScreen> {
                       ),
                     ),
                     onDismissed: (DismissDirection direction) {
-                      setState(() {});
+                      setState(() {
+                        dbHelper!.delete(valveId);
+                        loadData();
+                        snapshot.data!.remove(snapshot.data![index]);
+                      });
                     },
                     child: Container(
-                      margin: EdgeInsets.all(5),
-                      decoration:
-                          BoxDecoration(color: Colors.white, boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        )
-                      ]),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.all(10),
-                            title: Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Text(valveName),
+                        margin: EdgeInsets.all(5),
+                        decoration:
+                            BoxDecoration(color: Colors.white, boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          )
+                        ]),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(10),
+                                    title: Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Text(valveName),
+                                    ),
+                                    subtitle: Text(
+                                      valveIP,
+                                      style: TextStyle(fontSize: 17),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 10.0),
+                                  child: ToggleSwitch(
+                                    initialValue:
+                                        false, // todo: query for current state
+                                    onToggle: (value) {
+                                      // todo: query to set state of value
+                                      print("Toggle switched to $value");
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            subtitle: Text(
-                              valveIP,
-                              style: TextStyle(fontSize: 17),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        )),
                   );
                 },
               );
