@@ -28,8 +28,7 @@ class ValveDBHelper {
   _createDatabase(Database db, int version) async {
     // if using any more models, just create more tables here
     await db.execute(
-        "CREATE TABLE ?(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)",
-        [ValveModel.table]);
+        "CREATE TABLE valves(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)");
   }
 
   Future<ValveModel> insert(ValveModel model) async {
