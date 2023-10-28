@@ -73,6 +73,10 @@ class _AddValveScreenState extends State<AddValveScreen> {
                     ),
                     validator: (value) {
                       if (value!.isEmpty) return "Enter IP Address";
+                      if (!RegExp(r'^(\d{1,3}\.){3}\d{1,3}$').hasMatch(value)) {
+                        return "Invalid IP Address";
+                      }
+                      // todo: query to check if entered ip is of a value
                       return null;
                     },
                   ),
