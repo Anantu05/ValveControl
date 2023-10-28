@@ -112,7 +112,6 @@ class _ValvesScreenState extends State<ValvesScreen> {
                                         false, // todo: query for current state
                                     onToggle: (value) {
                                       // todo: query to set state of value
-                                      print("Toggle switched to $value");
                                     },
                                   ),
                                 ),
