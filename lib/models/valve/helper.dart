@@ -4,9 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:io' as io;
 import 'package:path/path.dart';
-import 'package:valve_control/models/model.dart';
+import 'package:valve_control/models/constants.dart';
+import 'package:valve_control/models/valve/model.dart';
 
-class DBHandler {
+class ValveDBHelper {
   static Database? _db;
 
   Future<Database?> get db async {
@@ -19,7 +20,7 @@ class DBHandler {
 
   initDatabase() async {
     io.Directory documentDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentDirectory.path, 'valves.db');
+    String path = join(documentDirectory.path, Constants.db);
     var db = await openDatabase(path, version: 1, onCreate: _createDatabase);
     return db;
   }
@@ -30,21 +31,22 @@ class DBHandler {
         "CREATE TABLE valves(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)");
   }
 
-  Future<Model> insert(Model model) async {
+  Future<ValveModel> insert(ValveModel model) async {
     var dbClient = await db;
-    await dbClient?.insert(model.table, model.toMap());
+    await dbClient?.insert(ValveModel.table, model.toMap());
     return model;
   }
 
-  Future<List<Model>> getDataList(String table) async {
+  Future<List<ValveModel>> getDataList() async {
     await db;
-    final List<Map<String, Object?>> queryResult = await _db!.query(table);
-    return queryResult.map((e) => Model.fromMap(e)).toList();
+    final List<Map<String, Object?>> queryResult =
+        await _db!.query(ValveModel.table);
+    return queryResult.map((e) => ValveModel.fromMap(e)).toList();
   }
 
-  Future<int> update(Model model) async {
+  Future<int> update(ValveModel model) async {
     var dbClient = await db;
-    return await dbClient!.update(model.table, model.toMap(),
+    return await dbClient!.update(ValveModel.table, model.toMap(),
         where: 'id = ?', whereArgs: [model.id]);
   }
 }

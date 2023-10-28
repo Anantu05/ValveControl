@@ -1,11 +1,9 @@
-import 'package:valve_control/models/model.dart';
-
-class ValveModel extends Model {
-  @override
-  // ignore: overridden_fields
+class ValveModel {
   final int? id;
   final String? name;
   final String? ip;
+
+  static const String table = 'valves';
 
   ValveModel({this.id, this.name, this.ip});
 
@@ -14,11 +12,7 @@ class ValveModel extends Model {
         name = res['name'],
         ip = res['ip'];
 
-  @override
   Map<String, Object?> toMap() {
     return {'id': id, 'name': name, 'ip': ip};
   }
-
-  @override
-  String get table => 'valves';
 }

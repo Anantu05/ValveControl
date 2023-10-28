@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:valve_control/db/db_handler.dart';
-import 'package:valve_control/models/model.dart';
+import 'package:valve_control/models/valve/helper.dart';
+import 'package:valve_control/models/valve/model.dart';
 import 'package:valve_control/screens/add_valve_screen.dart';
 
 class ValvesScreen extends StatefulWidget {
@@ -11,17 +11,17 @@ class ValvesScreen extends StatefulWidget {
 }
 
 class _ValvesScreenState extends State<ValvesScreen> {
-  DBHandler? dbHandler;
-  late Future<List<Model>> valveDataList;
+  ValveDBHelper? dbHelper;
+  late Future<List<ValveModel>> valveDataList;
   @override
   void initState() {
     super.initState();
-    dbHandler = DBHandler();
+    dbHelper = ValveDBHelper();
     loadData();
   }
 
   loadData() async {
-    valveDataList = dbHandler!.getDataList('valves');
+    valveDataList = dbHelper!.getDataList();
   }
 
   @override
@@ -37,7 +37,7 @@ class _ValvesScreenState extends State<ValvesScreen> {
           Expanded(
               child: FutureBuilder(
             future: valveDataList,
-            builder: (context, AsyncSnapshot<List<Model>> snapshot) {
+            builder: (context, AsyncSnapshot<List<ValveModel>> snapshot) {
               if (!snapshot.hasData || snapshot.data == null) {
                 return Center(
                   child: CircularProgressIndicator(),
@@ -53,7 +53,59 @@ class _ValvesScreenState extends State<ValvesScreen> {
                 );
               }
 
-              return Container();
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data?.length,
+                itemBuilder: (context, index) {
+                  int valveId = snapshot.data![index].id!.toInt();
+                  String valveName = snapshot.data![index].name!.toString();
+                  String valveIP = snapshot.data![index].ip!.toString();
+                  return Dismissible(
+                    key: ValueKey<int>(valveId),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.redAccent,
+                      child: Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onDismissed: (DismissDirection direction) {
+                      setState(() {});
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2.0,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            )
+                          ]),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.all(10),
+                            title: Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(valveName),
+                            ),
+                            subtitle: Text(
+                              valveIP,
+                              style: TextStyle(fontSize: 17),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
             },
           ))
         ],
@@ -66,7 +118,14 @@ class _ValvesScreenState extends State<ValvesScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => AddValveScreen(),
-              ));
+              )).then((value) => {
+                if (value)
+                  {
+                    setState(() {
+                      loadData();
+                    })
+                  }
+              });
         },
       ),
     );
