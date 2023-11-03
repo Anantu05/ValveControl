@@ -23,7 +23,6 @@ class _ValveControlState extends State<ValveControl> {
     }
   }
 
-  //List<String> titleList = ["Home", "Scheduler"];
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
