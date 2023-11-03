@@ -4,9 +4,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:io' as io;
 import 'package:path/path.dart';
-import 'package:valve_control/models/valve/model.dart';
+import 'package:valve_control/models/tasks/model.dart';
 
-class ValveDBHelper {
+class TasksDBHelper {
   static Database? _db;
 
   Future<Database?> get db async {
@@ -19,7 +19,7 @@ class ValveDBHelper {
 
   initDatabase() async {
     io.Directory documentDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentDirectory.path, "valves");
+    String path = join(documentDirectory.path, "tasks");
     var db = await openDatabase(path, version: 1, onCreate: _createDatabase);
     return db;
   }
@@ -27,31 +27,31 @@ class ValveDBHelper {
   _createDatabase(Database db, int version) async {
     // if using any more models, just create more tables here
     await db.execute(
-        "CREATE TABLE valves(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)");
+        "CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)");
   }
 
-  Future<ValveModel> insert(ValveModel model) async {
+  Future<TaskModel> insert(TaskModel model) async {
     var dbClient = await db;
-    await dbClient?.insert(ValveModel.table, model.toMap());
+    await dbClient?.insert(TaskModel.table, model.toMap());
     return model;
   }
 
-  Future<List<ValveModel>> getDataList() async {
+  Future<List<TaskModel>> getDataList() async {
     await db;
     final List<Map<String, Object?>> queryResult =
-        await _db!.query(ValveModel.table);
-    return queryResult.map((e) => ValveModel.fromMap(e)).toList();
+        await _db!.query(TaskModel.table);
+    return queryResult.map((e) => TaskModel.fromMap(e)).toList();
   }
 
-  Future<int> update(ValveModel model) async {
+  Future<int> update(TaskModel model) async {
     var dbClient = await db;
-    return await dbClient!.update(ValveModel.table, model.toMap(),
+    return await dbClient!.update(TaskModel.table, model.toMap(),
         where: 'id = ?', whereArgs: [model.id]);
   }
 
   Future<int> delete(int id) async {
     var dbClient = await db;
     return await dbClient!
-        .delete(ValveModel.table, where: 'id = ?', whereArgs: [id]);
+        .delete(TaskModel.table, where: 'id = ?', whereArgs: [id]);
   }
 }

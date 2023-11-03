@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:valve_control/screens/tasks_screen.dart';
 import 'package:valve_control/screens/valves_screen.dart';
 
 void main() {
-  runApp(MaterialApp(home:ValveControl()));
+  runApp(MaterialApp(home: ValveControl()));
 }
 
 class ValveControl extends StatefulWidget {
@@ -10,16 +11,18 @@ class ValveControl extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _ValveControlState createState() => _ValveControlState();
 }
-class _ValveControlState extends State<ValveControl>{
+
+class _ValveControlState extends State<ValveControl> {
   int _currentIndex = 0;
-  _getDrawerItemWidget(int pos){
-    switch (pos){
+  _getDrawerItemWidget(int pos) {
+    switch (pos) {
       case 0:
         return ValvesScreen();
       case 1:
-        return Placeholder();
+        return TasksScreen();
     }
   }
+
   //List<String> titleList = ["Home", "Scheduler"];
   @override
   Widget build(BuildContext context) {
