@@ -48,7 +48,7 @@ class _ValveControlState extends State<ValveControl> {
             icon: Icon(Icons.home),
           ),
           BottomNavigationBarItem(
-            label: 'Scheduler',
+            label: 'Tasks',
             icon: Icon(Icons.punch_clock),
           ),
         ],
