@@ -67,7 +67,7 @@ class _TasksScreenState extends State<TasksScreen> {
               MaterialPageRoute(
                 builder: (context) => AddTaskScreen(),
               )).then((value) => {
-                if (value)
+                if (value != null && value)
                   {
                     setState(() {
                       loadData();
