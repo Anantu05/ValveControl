@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:valve_control/models/valve/helper.dart';
-import 'package:valve_control/models/valve/model.dart';
+import 'package:valve_control/models/tasks/helper.dart';
+import 'package:valve_control/models/tasks/model.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -10,8 +10,9 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  ValveDBHelper? dbHandler;
-  late Future<List<ValveModel>> valveDataList;
+  TasksDBHelper? dbHandler;
+  TimeOfDay time = TimeOfDay(hour: 10, minute: 30);
+  late Future<List<TaskModel>> tasksDataList;
   final nameController = TextEditingController();
   final timeController = TextEditingController();
   final _fromKey = GlobalKey<FormState>();
@@ -19,12 +20,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void initState() {
     super.initState();
-    dbHandler = ValveDBHelper();
+    dbHandler = TasksDBHelper();
     loadData();
   }
 
   loadData() async {
-    valveDataList = dbHandler!.getDataList();
+    tasksDataList = dbHandler!.getDataList();
   }
 
   @override
@@ -62,20 +63,30 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   height: 10,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: TextFormField(
-                    keyboardType: TextInputType.url,
-                    controller: timeController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Time",
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) return "Enter time";
-                      return null;
-                    },
-                  ),
-                ),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${time.hour}:${time.minute}',
+                          style: TextStyle(fontSize: 32),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                            onPressed: () async {
+                              TimeOfDay? newTime = await showTimePicker(
+                                context: context,
+                                initialTime: time,
+                              );
+                              if (newTime == null) return;
+                              setState(() => time = newTime);
+                            },
+                            child: const Text("Pick Your Time",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                )))
+                      ],
+                    )),
               ],
             ),
           ),
@@ -119,9 +130,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   child: InkWell(
                     onTap: () {
                       if (_fromKey.currentState!.validate()) {
-                        dbHandler!.insert(ValveModel(
+                        dbHandler!.insert(TaskModel(
                             name: nameController.text,
-                            ip: timeController.text));
+                            time: timeController.text));
                         Navigator.of(context).pop(true);
                         nameController.clear();
                         timeController.clear();
