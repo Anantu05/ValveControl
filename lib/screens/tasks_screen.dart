@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:valve_control/models/tasks/helper.dart';
 import 'package:valve_control/models/tasks/model.dart';
 import 'package:valve_control/screens/add_task_screen.dart';
+import 'package:valve_control/components/toggle_switch.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -52,8 +53,76 @@ class _TasksScreenState extends State<TasksScreen> {
                   ),
                 );
               }
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data?.length,
+                itemBuilder: (context, index) {
+                  int valveId = snapshot.data![index].id!.toInt();
+                  String valveName = snapshot.data![index].name!.toString();
+                  String valveTime = snapshot.data![index].time!.toString();
+                  return Dismissible(
+                    key: ValueKey<int>(valveId),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.redAccent,
+                      child: Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onDismissed: (DismissDirection direction) {
+                      setState(() {
+                        dbHelper!.delete(valveId);
+                        loadData();
+                        snapshot.data!.remove(snapshot.data![index]);
+                      });
+                    },
+                    child: Container(
+                        margin: EdgeInsets.all(5),
+                        decoration:
+                            BoxDecoration(color: Colors.white, boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          )
+                        ]),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(10),
+                                    title: Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Text(valveTime),
+                                    ),
+                                    subtitle: Text(
+                                      valveTime,
+                                      style: TextStyle(fontSize: 17),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 10.0),
+                                  child: ToggleSwitch(
+                                    initialValue:
+                                        false, // todo: query for current state
+                                    onToggle: (value) {
+                                      // todo: query to set state of value
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )),
+                  );
+                },
+              );
               // todo: populate with list of tasks
-              return Placeholder();
+              //return Placeholder();
             },
           ))
         ],
@@ -67,7 +136,7 @@ class _TasksScreenState extends State<TasksScreen> {
               MaterialPageRoute(
                 builder: (context) => AddTaskScreen(),
               )).then((value) => {
-                if (value)
+                if (value != null && value)
                   {
                     setState(() {
                       loadData();

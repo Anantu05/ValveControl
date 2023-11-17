@@ -135,7 +135,7 @@ class _ValvesScreenState extends State<ValvesScreen> {
               MaterialPageRoute(
                 builder: (context) => AddValveScreen(),
               )).then((value) => {
-                if (value)
+                if (value != null && value)
                   {
                     setState(() {
                       loadData();

@@ -27,7 +27,7 @@ class TasksDBHelper {
   _createDatabase(Database db, int version) async {
     // if using any more models, just create more tables here
     await db.execute(
-        "CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, ip TEXT NOT NULL)");
+        "CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, time TEXT NOT NULL)");
   }
 
   Future<TaskModel> insert(TaskModel model) async {
