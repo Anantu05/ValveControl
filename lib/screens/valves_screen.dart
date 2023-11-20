@@ -3,6 +3,7 @@ import 'package:valve_control/components/toggle_switch.dart';
 import 'package:valve_control/models/valve/helper.dart';
 import 'package:valve_control/models/valve/model.dart';
 import 'package:valve_control/screens/add_valve_screen.dart';
+import 'package:valve_control/requests/valve_status_request.dart';
 
 class ValvesScreen extends StatefulWidget {
   const ValvesScreen({super.key});
@@ -109,9 +110,9 @@ class _ValvesScreenState extends State<ValvesScreen> {
                                   padding: EdgeInsets.only(right: 10.0),
                                   child: ToggleSwitch(
                                     initialValue:
-                                        false, // todo: query for current state
+                                        false,
                                     onToggle: (value) {
-                                      // todo: query to set state of value
+                                      ValveStatusRequest().get(valveIP, value);
                                     },
                                   ),
                                 ),
