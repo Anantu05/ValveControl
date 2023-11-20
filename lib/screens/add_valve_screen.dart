@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:valve_control/validators/valve_validator.dart';
 import 'package:valve_control/models/valve/helper.dart';
 import 'package:valve_control/models/valve/model.dart';
 
@@ -13,7 +14,7 @@ class _AddValveScreenState extends State<AddValveScreen> {
   ValveDBHelper? dbHandler;
   late Future<List<ValveModel>> valveDataList;
   final nameController = TextEditingController();
-  final ipController = TextEditingController();
+  late final ipController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
 
@@ -71,14 +72,6 @@ class _AddValveScreenState extends State<AddValveScreen> {
                       border: OutlineInputBorder(),
                       hintText: "IP Address",
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) return "Enter IP Address";
-                      if (!RegExp(r'^(\d{1,3}\.){3}\d{1,3}$').hasMatch(value)) {
-                        return "Invalid IP Address";
-                      }
-                      // todo: query to check if entered ip is of a value
-                      return null;
-                    },
                   ),
                 ),
               ],
@@ -122,10 +115,11 @@ class _AddValveScreenState extends State<AddValveScreen> {
                   color: Colors.green[400],
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                    onTap: () {
-                      if (_fromKey.currentState!.validate()) {
+                    onTap: () async {
+                      if (await ValveValidator().validate(ipController.text)) {
                         dbHandler!.insert(ValveModel(
                             name: nameController.text, ip: ipController.text));
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).pop(true);
                         nameController.clear();
                         ipController.clear();
