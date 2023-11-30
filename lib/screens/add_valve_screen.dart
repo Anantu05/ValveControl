@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:valve_control/validators/valve_validator.dart';
 import 'package:valve_control/models/valve/helper.dart';
 import 'package:valve_control/models/valve/model.dart';
+import 'package:valve_control/components/snackbar.dart';
 
 class AddValveScreen extends StatefulWidget {
   const AddValveScreen({super.key});
@@ -10,13 +11,7 @@ class AddValveScreen extends StatefulWidget {
   @override
   State<AddValveScreen> createState() => _AddValveScreenState();
 }
-void showFlashCard(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-    ),
-  );
-}
+
 class _AddValveScreenState extends State<AddValveScreen> {
   ValveDBHelper? dbHandler;
   late Future<List<ValveModel>> valveDataList;
