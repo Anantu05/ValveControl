@@ -124,6 +124,14 @@ class _AddValveScreenState extends State<AddValveScreen> {
                         nameController.clear();
                         ipController.clear();
                       }
+                      else{
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Invalid IP Address"),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       alignment: Alignment.center,
