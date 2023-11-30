@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:valve_control/validators/valve_validator.dart';
 import 'package:valve_control/models/valve/helper.dart';
@@ -9,7 +10,13 @@ class AddValveScreen extends StatefulWidget {
   @override
   State<AddValveScreen> createState() => _AddValveScreenState();
 }
-
+void showFlashCard(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+    ),
+  );
+}
 class _AddValveScreenState extends State<AddValveScreen> {
   ValveDBHelper? dbHandler;
   late Future<List<ValveModel>> valveDataList;
@@ -116,21 +123,30 @@ class _AddValveScreenState extends State<AddValveScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
                     onTap: () async {
-                      if (await ValveValidator().validate(ipController.text)) {
+                      int res = await ValveValidator().validate(ipController.text);
+                      if (res==0) {
                         dbHandler!.insert(ValveModel(
                             name: nameController.text, ip: ipController.text));
-                        // ignore: use_build_context_synchronously
+                        showFlashCard(context, "Valve Added Successfully!");
+                        
                         Navigator.of(context).pop(true);
                         nameController.clear();
                         ipController.clear();
                       }
-                      else{
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Invalid IP Address"),
-                          ),
-                        );
+                      else if (res==1){
+                        showFlashCard(context, "This is not a valve!");
+                      }
+                      else if (res==2){
+                        showFlashCard(context, "Connection failed!");
+                      }
+                      else if (res==3){
+                        showFlashCard(context, "Enter IP Address!");
+                      }
+                      else if (res==4){
+                        showFlashCard(context, "Enter valid IP Address!");
+                      }
+                      else if (res==5){
+                        showFlashCard(context, "Something went wrong!");
                       }
                     },
                     child: Container(
