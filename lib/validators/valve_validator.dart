@@ -2,26 +2,26 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ValveValidator {
-  Future<bool> validate(String url) async {
+  Future<int> validate(String url) async {
     try {
-      if (url.isEmpty) return false;
+      if (url.isEmpty) return 3;
       if (!RegExp(r'^(\d{1,3}\.){3}\d{1,3}$').hasMatch(url)) {
-        return false;
+        return 4;
       }
       final response = await http.get(Uri.parse("http://$url/check"));
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         if (responseBody["is_valve"]==true) {
-          return true;
+          return 0;
         } else {
-          return false;
+          return 1;
         }
       } else {
-        return false;
+        return 2;
       }
     } catch (e) {
       print(e);
-      return false;
+      return 5;
     }
   }
 }
