@@ -27,7 +27,7 @@ void toggleOn(int id, Map<String, dynamic> params) async {
 @pragma('vm:entry-point')
 void toggleOff(int id, Map<String, dynamic> params) async {
   List<ValveModel> valveDataList = await ValveDBHelper().getDataList();
-  print('$id: Turning on ${params['name']}');
+  print('$id: Turning off ${params['name']}');
   ValveModel valve =
       valveDataList.firstWhere((element) => element.name == params['name']);
   ValveStatusRequest().get(valve.ip ?? '192.168.0.0', false);
