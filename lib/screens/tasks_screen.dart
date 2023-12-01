@@ -1,8 +1,9 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:valve_control/components/datetime.dart';
 import 'package:valve_control/models/tasks/helper.dart';
 import 'package:valve_control/models/tasks/model.dart';
 import 'package:valve_control/screens/add_task_screen.dart';
-import 'package:valve_control/components/toggle_switch.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -57,11 +58,12 @@ class _TasksScreenState extends State<TasksScreen> {
                 shrinkWrap: true,
                 itemCount: snapshot.data?.length,
                 itemBuilder: (context, index) {
-                  int valveId = snapshot.data![index].id!.toInt();
+                  int taskId = snapshot.data![index].id!.toInt();
                   String valveName = snapshot.data![index].name!.toString();
-                  String valveTime = snapshot.data![index].time!.toString();
+                  String unparsedTime = snapshot.data![index].time!.toString();
+                  TimeOfDay taskTime = iso8601ToTimeOfDay(unparsedTime);
                   return Dismissible(
-                    key: ValueKey<int>(valveId),
+                    key: ValueKey<int>(taskId),
                     direction: DismissDirection.endToStart,
                     background: Container(
                       color: Colors.redAccent,
@@ -72,57 +74,37 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                     onDismissed: (DismissDirection direction) {
                       setState(() {
-                        dbHelper!.delete(valveId);
+                        dbHelper!.delete(taskId);
                         loadData();
                         snapshot.data!.remove(snapshot.data![index]);
+                        AndroidAlarmManager.cancel(taskId);
                       });
                     },
                     child: Container(
-                        margin: EdgeInsets.all(5),
-                        decoration:
-                            BoxDecoration(color: Colors.white, boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            spreadRadius: 1,
-                          )
-                        ]),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ListTile(
-                                    contentPadding: EdgeInsets.all(10),
-                                    title: Padding(
-                                      padding: EdgeInsets.only(bottom: 10),
-                                      child: Text(valveTime),
-                                    ),
-                                    subtitle: Text(
-                                      valveTime,
-                                      style: TextStyle(fontSize: 17),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  child: ToggleSwitch(
-                                    initialValue:
-                                        false, // todo: query for current state
-                                    onToggle: (value) {
-                                      // todo: query to set state of value
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )),
+                      margin: EdgeInsets.all(5),
+                      decoration:
+                          BoxDecoration(color: Colors.white, boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        )
+                      ]),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(10),
+                        title: Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(valveName),
+                        ),
+                        subtitle: Text(
+                          '${taskTime.hour}:${taskTime.minute}',
+                          style: TextStyle(fontSize: 17),
+                        ),
+                      ),
+                    ),
                   );
                 },
               );
-              // todo: populate with list of tasks
-              //return Placeholder();
             },
           ))
         ],

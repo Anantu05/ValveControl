@@ -1,6 +1,12 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:valve_control/components/datetime.dart';
+import 'package:valve_control/components/toggle_switch.dart';
 import 'package:valve_control/models/tasks/helper.dart';
 import 'package:valve_control/models/tasks/model.dart';
+import 'package:valve_control/models/valve/helper.dart';
+import 'package:valve_control/models/valve/model.dart';
+import 'package:valve_control/requests/valve_switch_request.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -9,12 +15,21 @@ class AddTaskScreen extends StatefulWidget {
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
+@pragma('vm:entry-point')
+void toggle(int id, Map<String, dynamic> params) async {
+  List<ValveModel> valveDataList = await ValveDBHelper().getDataList();
+  print(params);
+  ValveModel valve =
+      valveDataList.firstWhere((element) => element.name == params['name']);
+  ValveStatusRequest().get(valve.ip ?? '192.168.0.0', params['state']);
+}
+
 class _AddTaskScreenState extends State<AddTaskScreen> {
   TasksDBHelper? dbHandler;
   TimeOfDay time = TimeOfDay(hour: 10, minute: 30);
+  bool state = true;
   late Future<List<TaskModel>> tasksDataList;
   final nameController = TextEditingController();
-  final timeController = TextEditingController();
   final _fromKey = GlobalKey<FormState>();
 
   @override
@@ -87,6 +102,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 )))
                       ],
                     )),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: ToggleSwitch(
+                      initialValue: state,
+                      onToggle: (value) {
+                        setState(() => state = value);
+                      }),
+                )
               ],
             ),
           ),
@@ -103,7 +126,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     onTap: () {
                       setState(() {
                         nameController.clear();
-                        timeController.clear();
                         Navigator.of(context).pop();
                       });
                     },
@@ -130,12 +152,36 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   child: InkWell(
                     onTap: () {
                       if (_fromKey.currentState!.validate()) {
-                        dbHandler!.insert(TaskModel(
-                            name: nameController.text,
-                            time: timeController.text));
+                        String name = nameController.text;
+                        dbHandler!
+                            .insert(TaskModel(
+                                name: name,
+                                time: timeOfDayToISO8601(time),
+                                state: state ? "on" : "off"))
+                            .then((value) => {
+                                  (() {
+                                    DateTime now = DateTime.now();
+                                    DateTime dateTime = DateTime(
+                                        now.year,
+                                        now.month,
+                                        now.day,
+                                        time.hour,
+                                        time.minute);
+
+                                    AndroidAlarmManager.periodic(
+                                        const Duration(minutes: 1),
+                                        value.id ?? 0,
+                                        toggle,
+                                        // startAt: dateTime,
+                                        params: {
+                                          'name': name,
+                                          'state': state
+                                        }).then((value) => print(
+                                        '=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n============================================Scheduled============================================='));
+                                  })()
+                                });
                         Navigator.of(context).pop(true);
                         nameController.clear();
-                        timeController.clear();
                       }
                     },
                     child: Container(
