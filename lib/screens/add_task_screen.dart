@@ -16,12 +16,21 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 @pragma('vm:entry-point')
-void toggle(int id, Map<String, dynamic> params) async {
+void toggleOn(int id, Map<String, dynamic> params) async {
   List<ValveModel> valveDataList = await ValveDBHelper().getDataList();
-  print(params);
+  print('$id: Turning on ${params['name']}');
   ValveModel valve =
       valveDataList.firstWhere((element) => element.name == params['name']);
-  ValveStatusRequest().get(valve.ip ?? '192.168.0.0', params['state']);
+  ValveStatusRequest().get(valve.ip ?? '192.168.0.0', true);
+}
+
+@pragma('vm:entry-point')
+void toggleOff(int id, Map<String, dynamic> params) async {
+  List<ValveModel> valveDataList = await ValveDBHelper().getDataList();
+  print('$id: Turning on ${params['name']}');
+  ValveModel valve =
+      valveDataList.firstWhere((element) => element.name == params['name']);
+  ValveStatusRequest().get(valve.ip ?? '192.168.0.0', false);
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
@@ -171,11 +180,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                     AndroidAlarmManager.periodic(
                                         const Duration(minutes: 1),
                                         value.id ?? 0,
-                                        toggle,
+                                        (state ? toggleOn : toggleOff),
                                         // startAt: dateTime,
                                         params: {
-                                          'name': name,
-                                          'state': state
+                                          'name': name
                                         }).then((value) => print(
                                         '=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n=============================================\n============================================Scheduled============================================='));
                                   })()
